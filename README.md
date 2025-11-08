@@ -1,202 +1,62 @@
-# Temporal Hierarchy Analysis of Inflammatory Biomarkers
-## Generalizable Framework for Longitudinal Biomarker Relationship Discovery
+# Longitudinal Biomarker Analysis: A Data-Driven Pivot from Sparse to Dense Correlations
 
-### Project Overview
-This project develops and validates a generalizable analytical framework for identifying temporal relationships between biomarkers in longitudinal health data. Using inflammatory bowel disease (IBD) biomarker data as a demonstration case, we test the **temporal hierarchy hypothesis**: that local tissue inflammation markers exhibit temporal priority over systemic markers of secondary complications.
+This repository contains a graduate-level data science project analyzing a sparse, longitudinal biomarker dataset. The project documents an analytical journey from an initial, sparse-data hypothesis (Calprotectin vs. Hemoglobin) to a robust, data-dense finding: a significant concurrent correlation between Albumin and Hemoglobin.
 
-### Course Context
-This project was developed for **BENG 211: Systems Biology and Bioengineering I** at UC San Diego, taught by Dr. Benjamin Smarr.
+The analysis demonstrates methods for handling statistical artifacts, data sparsity, and biological confounders, culminating in a validated, significant finding.
 
-**Project Team:**
-- Pavithra Ramesh
-- Aditi Jantikar
-- Tejaswini Deshmukh
-- Ananya Ramakrishnan
+![Main Finding: Albumin vs. Hemoglobin Correlation](Albumin_vs_Hemoglobin_Scatter.png)
 
-### Scientific Hypothesis
+---
 
-**Primary Hypothesis:**
-"In chronic inflammatory conditions, local tissue inflammation markers exhibit temporal priority over systemic markers of secondary complications."
+## The Analytical Journey: From Sparsity to Significance
 
-**Testable Predictions:**
-1. Local inflammation biomarkers (calprotectin) will precede systemic outcome biomarkers (hemoglobin) with a detectable time lag
-2. The temporal lag will be consistent with underlying pathophysiological mechanisms
-3. Inflammation severity will correlate with the magnitude of systemic effects (dose-response)
-4. The analytical framework will apply to other chronic inflammatory conditions
+The core of this project is the pivot from a compelling but statistically untestable hypothesis to a provable, data-driven one.
 
-### Why This Matters
+### Phase 1: The Initial (Sparse) Hypothesis: Calprotectin vs. Hemoglobin
 
-**Clinical Relevance:**
-- Early detection: Local markers as leading indicators of systemic complications
-- Personalized monitoring: Identify patient-specific temporal patterns
-- Intervention timing: Predict when systemic effects will manifest
-- Treatment optimization: Adjust therapy before complications develop
+The project began by attempting to validate the medical literature's link between gut inflammation (Fecal Calprotectin) and anemia (Hemoglobin).
 
-**Methodological Innovation:**
-- Generalizable framework applicable to multiple diseases
-- Discovers temporal relationships without assuming specific lag times
-- Handles real-world data challenges (irregular sampling, missing data)
-- Provides quantitative metrics for temporal relationships
+* **Initial Artifact:** A cross-correlation on *interpolated* data produced a "perfect" $p=0$ result. This was identified as a **statistical artifact** (a "bad $p=0$") caused by correlating two "connect-the-dots" lines, not real data.
+* **Honest Analysis:** A robust `merge_asof` analysis on the *raw*, non-interpolated data found the true, underlying relationship:
+    * **Correlation (r):** -0.120 (Directionally correct)
+    * **P-value (p):** 0.164 (Statistically insignificant)
+* **Conclusion:** The initial hypothesis was not wrong, but it was **unprovable** with this dataset. The core problem was **Data Sparsity**—stool tests (Calprotectin) and blood tests (Hemoglobin) are rarely collected at the same time, leading to a weak signal ($r = -0.12$) and low power ($n = 137$).
 
-### Dataset Description
+---
 
-**Data Source:**
-Longitudinal biomarker measurements from an IBD patient spanning 1996-2025 (29 years), representing one of the most comprehensive personal biological monitoring datasets available.
+## The Pivot & Key Finding: A "Dense" Analysis
 
-**Key Biomarkers Analyzed:**
+The analysis pivoted to a "dense" hypothesis: analyzing markers collected from the **same blood panel**, thus eliminating the sparsity problem.
 
-| Biomarker Level | Marker | Type | Measurements | Clinical Significance |
-|-----------------|--------|------|--------------|----------------------|
-| Local Inflammation | Fecal Calprotectin | Gut-specific | 223 | Active intestinal inflammation |
-| Systemic Inflammation | C-Reactive Protein (CRP) | Body-wide | Variable | Systemic inflammatory response |
-| Intermediate Effect | Serum Ferritin | Iron stores | Variable | Body iron depletion |
-| Clinical Outcome | Hemoglobin | Anemia marker | 149 | Oxygen-carrying capacity |
+### Finding 1: A Strong Concurrent Correlation (Albumin vs. Hemoglobin)
 
-**Data Files:**
-- `LS Biomarkers Timeseries.csv` - Original time series format (1993-2025)
-- `LLM_Biomarkers_Long.csv` - Long format for time series analysis
-- `LLM_Biomarkers_Wide.csv` - Wide format for statistical modeling
+The primary finding is a strong, significant link between Albumin and Hemoglobin. A sensitivity analysis showed this link is **concurrent** (strongest at a 1-day window) and not temporally predictive.
 
-### Analytical Framework
+* **Statistical Finding:**
+    * **Correlation (r):** +0.551
+    * **P-value (p):** < 0.001 (full value: $6.14 \times 10^{-12}$)
+    * **Sample Size (n):** 133 (real, concurrent data pairs)
 
-Our generalizable framework consists of four analytical phases:
+* **Biological Interpretation:** The positive correlation is biologically correct.
+    * **Healthy State:** High Albumin (good nutrition/low inflammation) is paired with High Hemoglobin (no anemia).
+    * **Inflamed State:** Low Albumin (malnutrition/high inflammation) is paired with Low Hemoglobin (anemia).
 
-**Phase 1: Biomarker Characterization**
-- Descriptive statistics and data quality assessment
-- Event detection and classification
-- Temporal pattern identification
+* **Visual Validation:** A linear regression scatter plot (see `Albumin_vs_Hemoglobin_Scatter.png`) was generated, confirming the relationship is linear and not driven by outliers.
 
-**Phase 2: Cross-Correlation Analysis**
-- Systematic testing of multiple time lags (0-12 weeks)
-- Identification of optimal temporal relationships
-- Statistical significance testing
+---
 
-**Phase 3: Event-Based Analysis**
-- Comparison of outcomes following high vs. normal inflammation periods
-- Effect size quantification
-- Threshold identification
+## How to Run
 
-**Phase 4: Dose-Response Modeling**
-- Relationship between inflammation severity and systemic impact
-- Threshold vs. linear relationship testing
-- Predictive model development
+This analysis was conducted in Python using Jupyter Notebooks.
 
-### Methods Overview
+### Dependencies
 
-**Statistical Approaches:**
-- Pearson correlation for linear relationships
-- Time-lagged cross-correlation for temporal pattern discovery
-- Paired statistical tests for event-based comparisons
-- Dose-response trend analysis
-- ROC analysis for threshold optimization
+* pandas
+* numpy
+* scipy
+* matplotlib
+* seaborn
 
-**Handling Data Challenges:**
-- Linear interpolation for irregular sampling intervals
-- Missing data strategies
-- Multiple comparison corrections
-- Sensitivity analysis for robustness
-
-### Generalizability: Application to Other Diseases
-
-This framework can be directly applied to other chronic inflammatory conditions:
-
-| Disease Context | Local Marker | Systemic Marker | Predicted Mechanism |
-|-----------------|--------------|-----------------|---------------------|
-| Rheumatoid Arthritis | Synovial fluid cytokines | Serum CRP | Joint inflammation → systemic response |
-| Chronic Kidney Disease | Urine albumin | Serum creatinine | Glomerular damage → nephron loss |
-| COPD | Sputum neutrophils | Systemic inflammatory markers | Airway inflammation → systemic spillover |
-| Type 2 Diabetes | HbA1c | Microalbuminuria | Hyperglycemia → microvascular damage |
-| Heart Failure | BNP | Troponin/EF | Cardiac stress → myocardial damage |
-
-
-### Getting Started
-
-**Prerequisites:**
+You can install all dependencies via:
 ```bash
-Python 3.8+
-pandas >= 1.3.0
-numpy >= 1.21.0
-matplotlib >= 3.4.0
-seaborn >= 0.11.0
-scipy >= 1.7.0
-statsmodels >= 0.13.0
-```
-
-**Installation:**
-```bash
-git clone [repository-url]
-cd LargeLarryModelers
-pip install -r requirements.txt
-```
-
-### Technical Skills Demonstrated
-
-**Data Science:**
-- Time series analysis and preprocessing
-- Cross-correlation and lagged regression
-- Event detection and classification
-- Statistical hypothesis testing
-- Data visualization for biological insights
-
-**Python Tools:**
-- pandas: Data manipulation and time series handling
-- numpy: Numerical computing and array operations
-- scipy: Statistical testing and correlation analysis
-- matplotlib/seaborn: Publication-quality visualizations
-- statsmodels: Advanced statistical modeling
-
-**Systems Biology:**
-- Multi-scale biomarker analysis
-- Temporal dynamics in biological systems
-- Integration of local and systemic measurements
-- Mechanistic interpretation of statistical relationships
-
-### Limitations and Future Directions
-
-**Current Limitations:**
-- Single-subject dataset limits population-level generalizability
-- Irregular measurement intervals create analytical challenges
-- Confounding factors (diet, medication, supplements) not controlled
-- Causation cannot be definitively established from observational data
-
-**Future Work:**
-- Multi-patient validation cohort
-- Include additional intermediate biomarkers (transferrin saturation)
-- Machine learning models for personalized lag prediction
-- Prospective validation study with standardized measurement intervals
-- Application to other chronic inflammatory disease populations
-
-### Educational Value
-
-This project demonstrates:
-- Complete workflow from hypothesis to validated findings
-- Rigorous statistical methodology for biological data
-- Generalizable analytical framework development
-- Real-world data handling and quality control
-- Scientific communication and visualization
-
-### References
-
-1. Wang, W., et al. (2025). The role of Calprotectin in the diagnosis and treatment of inflammatory bowel disease. International Journal of Molecular Sciences, 26(5), 1996.
-
-2. Mooiweer, E., et al. (2014). Fecal Hemoglobin and Calprotectin Are Equally Effective in Identifying Patients with Inflammatory Bowel Disease with Active Endoscopic Inflammation. Inflammatory Bowel Diseases, 20(2), 307-314.
-
-3. Vavricka, S. R., et al. (2018). The Vampire Study: Significant elevation of faecal calprotectin in healthy volunteers after 300 ml blood ingestion. United European Gastroenterology Journal, 6(7), 1007-1014.
-
-4. Hassan, M., et al. (2024). Correlation of hemoglobin level with new inflammatory markers. Cureus.
-
-5. Logan, M., et al. (2019). The reduction of faecal calprotectin during exclusive enteral nutrition. Alimentary Pharmacology & Therapeutics, 50(6), 664-674.
-
-### Contact
-
-- Aditi Jantikar and Pavithra Ramesh UC San Diego
-- Instructor: Dr. Benjamin Smarr
-
-### License
-
-This project is developed for educational purposes as part of BENG 211 coursework at UC San Diego.
-
-### Acknowledgments
-
-- Dr. Benjamin Smarr for dataset access and project guidance
-- LS for three decades of meticulous biological data collection
+pip install pandas numpy scipy matplotlib seaborn
