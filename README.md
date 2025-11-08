@@ -4,7 +4,7 @@ This repository contains a project analyzing a sparse, longitudinal biomarker da
 
 The analysis demonstrates methods for handling statistical artifacts, data sparsity, and biological confounders, culminating in a validated, significant finding.
 
-![Main Finding: Albumin vs. Hemoglobin Correlation](<img width="2961" height="1760" alt="albumin vs hemoglobin" src="https://github.com/user-attachments/assets/174e79c5-2633-4279-a972-9cbfa88731aa" />)
+![Main Finding: Albumin vs. Hemoglobin Correlation](<img width="2961" height="1760" alt="albumin vs hemoglobin" src="https://github.com/user-attachments/assets/cf54447f-27e3-4be3-bde2-8e64ec994a8b" />)
 
 
 ---
