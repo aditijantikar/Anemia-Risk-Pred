@@ -22,7 +22,7 @@ The project began by attempting to validate the medical literature's link betwee
 
 ---
 
-## The Pivot & Key Finding: A "Dense" Analysis
+## The Pivot & Key Finding: A Dense Analysis
 
 The analysis pivoted to a "dense" hypothesis: analyzing markers collected from the **same blood panel**, thus eliminating the sparsity problem.
 
